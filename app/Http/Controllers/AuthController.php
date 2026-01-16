@@ -6,57 +6,72 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Profils;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\CommentNotification;
 
 class AuthController extends Controller
 {
     public function getLoginForm(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required']
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required']
+            ]);
 
-        if (Auth::attempt($credentials)) {
-            return redirect(route('welcome'))->with('success', 'Connexion réussie !');;
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+                return redirect(route('welcome'))->with('success', 'Connexion réussie !');
+            }
+
+            return back()->withErrors([
+                'email' => 'L\'adresse email ou le mot de passe que vous avez saisi est incorrect.'
+            ])->onlyInput('email');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Une erreur est survenue lors de la connexion.'])->onlyInput('email');
         }
-
-        return back()->withErrors([
-            'email' => 'L\'adresse email ou le mot de passe que vous avez saisi est incorrect.'
-        ]);
     }
 
     public function getRegisterForm(Request $request)
     {
-        $credentials = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-        //Créer un utilisateur ici
-        
-        //Connexion automatique au nouveau c
-        #Auth::login($user); is for using the user's data on pages right after registering
-        #Auth::attempt($credentials); only for logging in with the given credentials
+        try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'unique:users,email'],
+                'password' => ['required', 'confirmed', 'min:8'],
+            ]);
 
-        $user = User::create([
-            'name' => $credentials['name'],
-            'email' => $credentials['email'],
-            'password' => Hash::make($credentials['password']),
-        ]);
+            // Créer l'utilisateur
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
 
-        $profil = Profils::create([
-            'user_id' => $user->id,
-            'bio' => 'Empty',
-            'avatar' => 'Empty'
-        ]);
-        
-        Auth::Login($user);
-        return redirect(route('welcome'))->with('success', 'Inscription réussie ! Vous êtes maintenant connecté.');
+            // Créer le profil associé
+            $profil = Profils::create([
+                'user_id' => $user->id,
+                'bio' => 'Bienvenue sur mon profil !',
+                'avatar' => null
+            ]);
+            Mail::to($user->email)->queue(new WelcomeMail($user));
+            // Connecter l'utilisateur
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect(route('welcome'))->with('success', 'Inscription réussie ! Vous êtes maintenant connecté.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Une erreur est survenue lors de l\'inscription: ' . $e->getMessage()])->withInput();
+        }
     }
 
-
-    public function logout(Request $request) {
+    public function logout(Request $request) 
+    {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('welcome')->with('warning', 'Vous avez été déconnecté.');
     }
 }
+

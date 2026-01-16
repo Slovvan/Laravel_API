@@ -20,6 +20,8 @@ class UserController extends Controller
         $user = User::find($id);
         $profil = Profils::where('user_id', $id)->first();
 
+        $profil = $user->profil;
+
         if(!$user){
             return redirect()->route('users.index');
         }

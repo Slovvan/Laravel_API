@@ -1,135 +1,102 @@
 @extends('layouts.app')
 
+@section('extra-css')
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+@endsection
+
 @section('content')
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h2>Modifier mon profil</h2>
-        </div>
-        <div class="card-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+    <div class="edit-form">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: #111827;">Modifier mon profil</h1>
 
-            <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+        @if($errors->any())
+            <div class="form-errors">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                <!-- Sección de información del usuario -->
-                <h4 class="mb-3">Informations personnelles</h4>
+        {{-- CORRECCIÓN: action apunta a profil.update y se usa @method('PUT') --}}
+        <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="form-section">
+                <div class="form-section-title">Informations personnelles</div>
                 
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nom</label>
-                    <input 
-                        type="text" 
-                        class="form-control @error('name') is-invalid @enderror" 
-                        id="name" 
-                        name="name" 
-                        value="{{ old('name', $user->name) }}" 
-                        required>
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="form-group">
+                    <label for="name">Nom</label>
+                    <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input 
-                        type="email" 
-                        class="form-control @error('email') is-invalid @enderror" 
-                        id="email" 
-                        name="email" 
-                        value="{{ old('email', $user->email) }}" 
-                        required>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required>
                 </div>
+            </div>
 
-                <hr class="my-4">
-
-                <!-- Sección de cambio de contraseña -->
-                <h4 class="mb-3">Changer le mot de passe (optionnel)</h4>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">Nouveau mot de passe</label>
-                    <input 
-                        type="password" 
-                        class="form-control @error('password') is-invalid @enderror" 
-                        id="password" 
-                        name="password"
-                        placeholder="Laisser vide pour ne pas changer">
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="form-text text-muted">Minimum 8 caractères</small>
+            <div class="form-section">
+                <div class="form-section-title">Sécurité</div>
+                <div class="form-group">
+                    <label for="password">Nouveau mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Laisser vide pour ne pas changer">
                 </div>
-
-                <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
-                    <input 
-                        type="password" 
-                        class="form-control" 
-                        id="password_confirmation" 
-                        name="password_confirmation"
-                        placeholder="Confirmer le nouveau mot de passe">
+                <div class="form-group">
+                    <label for="password_confirmation">Confirmer le mot de passe</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmer le nouveau mot de passe">
                 </div>
+            </div>
 
-                <hr class="my-4">
+            <div class="form-section">
+                <div class="form-section-title">Profil public</div>
 
-                <!-- Sección de perfil -->
-                <h4 class="mb-3">Profil public</h4>
-
-                <div class="mb-3">
-                    <label for="avatar" class="form-label">Avatar</label>
+                <div class="form-group">
+                    <label>Avatar</label>
+                    <div id="avatar-preview-container" style="margin-bottom: 1rem;">
+                        @if($profil->avatar)
+                            <div class="avatar-preview" style="text-align: center;">
+                                <img id="avatar-preview-image" src="{{ asset('storage/' . $profil->avatar) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff;">
+                            </div>
+                        @else
+                            <div id="avatar-placeholder" style="text-align: center; width: 150px; height: 150px; margin: 0 auto; background: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 50px;">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                        @endif
+                    </div>
                     
-                    @if($profil->avatar)
-                        <div class="mb-2">
-                            <img src="{{ asset('storage/' . $profil->avatar) }}" 
-                                alt="Avatar actuel" 
-                                class="img-thumbnail"
-                                style="max-width: 150px;">
-                        </div>
-                    @endif
-                    
-                    <input 
-                        type="file" 
-                        class="form-control @error('avatar') is-invalid @enderror" 
-                        id="avatar" 
-                        name="avatar"
-                        accept="image/jpeg,image/png,image/jpg,image/gif">
-                    @error('avatar')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="form-text text-muted">Format: JPG, PNG, GIF. Taille max: 2MB</small>
+                    <input type="file" id="avatar" name="avatar" accept="image/*">
                 </div>
 
-                <div class="mb-3">
-                    <label for="bio" class="form-label">Bio</label>
-                    <textarea 
-                        class="form-control @error('bio') is-invalid @enderror" 
-                        id="bio" 
-                        name="bio" 
-                        rows="5"
-                        placeholder="Parlez-nous de vous...">{{ old('bio', $profil->bio) }}</textarea>
-                    @error('bio')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="form-text text-muted">Maximum 500 caractères</small>
+                <div class="form-group">
+                    <label for="bio">Biographie</label>
+                    <textarea id="bio" name="bio" rows="5">{{ old('bio', $profil->bio) }}</textarea>
                 </div>
+            </div>
 
-                <div class="d-flex justify-content-between">
-                    <a href="{{ route('welcome') }}" class="btn btn-secondary">Annuler</a>
-                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                </div>
-            </form>
-        </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                {{-- CORRECCIÓN: El botón Annuler ahora redirige al perfil --}}
+                <a href="{{ route('profil.show', $profil->id) }}" class="btn btn-outline" style="flex: 1; text-align: center; text-decoration: none; line-height: 2.5; border: 1px solid #ccc; border-radius: 4px;">Annuler</a>
+                <button type="submit" class="btn-submit" style="flex: 1; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Enregistrer</button>
+            </div>
+        </form>
     </div>
-</div>
+
+    <script>
+        // Lógica de preview simple
+        document.getElementById('avatar').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                let previewImg = document.getElementById('avatar-preview-image');
+                if (!previewImg) {
+                    const container = document.getElementById('avatar-preview-container');
+                    container.innerHTML = '<img id="avatar-preview-image" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff;">';
+                    previewImg = document.getElementById('avatar-preview-image');
+                }
+                previewImg.src = event.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        });
+    </script>
 @endsection

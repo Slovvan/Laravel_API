@@ -13,9 +13,9 @@
         </div>
     @endif
 
-    <form action="{{ route('articles.update', $article->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+    <form action="{{ route('articles.update', $article->id) }}" method="POST">s
+    @csrf
+    @method('PUT')
 
         <div>
             <label for="title">Title:</label>

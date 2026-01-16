@@ -1,0 +1,378 @@
+/* ===========================
+   ESTILOS PERFIL - Profile Pages
+   =========================== */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #64748b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --light: #f3f4f6;
+    --gray: #e5e7eb;
+    --dark: #1f2937;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+}
+
+.profile-card {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.profile-header {
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary);
+    background-color: var(--light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.profile-avatar-placeholder {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: white;
+    font-weight: bold;
+    border: 4px solid var(--primary);
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 1rem 0 0.5rem;
+}
+
+.profile-email {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.profile-bio {
+    background-color: var(--light);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--primary);
+    color: var(--text-primary);
+    font-style: italic;
+}
+
+.profile-body {
+    padding: 2rem;
+}
+
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+.profile-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+.profile-info {
+    display: grid;
+    gap: 1rem;
+}
+
+.profile-info-item {
+    padding: 1rem;
+    background-color: var(--light);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--secondary);
+}
+
+.profile-info-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.profile-info-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Edit Form Styles */
+.edit-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background-color: var(--light);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+}
+
+.form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    background-color: white;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.form-errors {
+    background-color: #fee2e2;
+    color: #7f1d1d;
+    border: 1px solid #fca5a5;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-errors ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.form-errors li {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-errors li:last-child {
+    margin-bottom: 0;
+}
+
+/* Avatar Upload */
+.avatar-upload-section {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 2px dashed var(--border);
+    text-align: center;
+}
+
+.avatar-preview {
+    margin-bottom: 1rem;
+}
+
+.avatar-preview img {
+    max-width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+}
+
+.avatar-upload-input {
+    display: none;
+}
+
+.avatar-upload-label {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.avatar-upload-label:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.avatar-filename {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Buttons */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-header {
+        padding: 1.5rem;
+    }
+
+    .profile-body {
+        padding: 1.5rem;
+    }
+
+    .form-section {
+        padding: 1.5rem;
+    }
+
+    .edit-form {
+        padding: 0;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+    }
+
+    .profile-avatar,
+    .profile-avatar-placeholder {
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
+    }
+}
+
+/* Error message styling */
+.invalid-feedback {
+    display: block;
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.is-invalid {
+    border-color: var(--danger) !important;
+}

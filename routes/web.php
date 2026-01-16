@@ -26,8 +26,11 @@ Route::get('/aboutMe', function () {
     return view('about_me', ['name' => 'Erik']);
 })->name("aboutMe");
 
-Route::post('/login', [AuthController::class, 'getLoginForm'])->name("login");
-Route::post('/register', [AuthController::class, 'getRegisterForm'])->name("register");
+// Rutas de Autenticación
+Route::post('/login', [AuthController::class, 'getLoginForm'])->name("loginStore");
+Route::post('/register', [AuthController::class, 'getRegisterForm'])->name("registerStore");
+Route::get('/login', function () { return view('login'); })->name('login.form')->middleware('guest');
+Route::get('/register', function () { return view('register'); })->name('register.form')->middleware('guest');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -46,11 +49,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/comments/{comment}/report', [ReportController::class, 'store'])->name('comments.report.store');
     Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
-    Route::get('/profil/{profil}', [ProfilController::class, 'show'])->name('profil.show');
 });
-
-Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+    
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');// Cambiar esta línea:
 Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/profil/{profil}', [ProfilController::class, 'show'])->name('profil.show');
 
 Route::group(['middleware' => 'auth', 'admin'], function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

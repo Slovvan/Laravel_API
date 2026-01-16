@@ -12,6 +12,7 @@ class Profils extends Model
         'user_id',
         'bio',
         'avatar',
+        'avatar_thumbnail',
     ];
     /**
      * Inverse one-to-one: Profil -> User

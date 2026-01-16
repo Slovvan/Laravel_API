@@ -1,0 +1,185 @@
+/* ===========================
+   ESTILOS WELCOME PAGE
+   =========================== */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.welcome-hero {
+    background: var(--gradient);
+    color: white;
+    padding: 4rem 1rem;
+    text-align: center;
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+}
+
+.welcome-hero h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.welcome-hero p {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.welcome-actions .btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.welcome-actions .btn-primary {
+    background-color: white;
+    color: var(--primary);
+}
+
+.welcome-actions .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-actions .btn-secondary {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.welcome-actions .btn-secondary:hover {
+    background-color: white;
+    color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.feature-card {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    border: 1px solid #e5e7eb;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #111827;
+}
+
+.feature-card p {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.cta-section {
+    background: var(--gradient);
+    color: white;
+    padding: 3rem 1rem;
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+    .welcome-hero h1 {
+        font-size: 2rem;
+    }
+
+    .welcome-hero p {
+        font-size: 1rem;
+    }
+
+    .welcome-actions {
+        flex-direction: column;
+    }
+
+    .welcome-actions .btn {
+        width: 100%;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-section h2 {
+        font-size: 1.5rem;
+    }
+}

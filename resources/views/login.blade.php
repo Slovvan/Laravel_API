@@ -1,22 +1,61 @@
-@extends('layouts.app')
+@extends('layouts.auth')
+
+@section('title', 'Connexion')
 
 @section('content')
-    {{$errors}}
+    <div class="auth-header">
+        <h1>Connexion</h1>
+        <p>Accédez à votre compte</p>
+    </div>
 
-    <form action="{{ route('login') }}" method="POST">
+    @if($errors->any())
+        <div class="errors">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('loginStore') }}" method="POST" class="auth-form">
         @csrf
 
-        <div>
-            <label for="email_input">Email</label>
-            <input name="email" type="email" id="email_input"/>
+        <div class="form-group">
+            <label for="email_input">Adresse Email</label>
+            <input 
+                type="email" 
+                id="email_input" 
+                name="email"
+                placeholder="vous@example.com"
+                value="{{ old('email') }}"
+                required
+                class="@error('email') error @enderror"
+            />
+            @error('email')
+                <small class="error-text">{{ $message }}</small>
+            @enderror
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="password_input">Mot de passe</label>
-            <input name="password" type="password" id="password_input"/>
+            <input 
+                type="password" 
+                id="password_input" 
+                name="password"
+                placeholder="••••••••"
+                required
+                class="@error('password') error @enderror"
+            />
+            @error('password')
+                <small class="error-text">{{ $message }}</small>
+            @enderror
         </div>
 
-        <button type="submit">Connexion</button>
+        <button type="submit" class="btn-submit">Se connecter</button>
     </form>
 
+    <div class="auth-link">
+        Pas de compte ? <a href="{{ route('registerStore') }}">Créer un compte</a>
+    </div>
 @endsection

@@ -1,12 +1,20 @@
-<div>
 @extends('layouts.app')
-@section('content')
-@guest
-    <li>
-                <a href="{{route('articles.index')}}">Liste des articles</a>
-     </li>
-@endguest
+
+@section('extra-css')
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 @endsection
 
- <!-- It is not the man who has too little, but the man who craves more, that is poor. - Seneca -->
-</div>
+@section('content')
+    <div class="welcome-hero">
+        <div class="welcome-actions">
+            @guest
+                <a href="{{ route('loginStore') }}" class="btn btn-primary">Se connecter</a>
+                <a href="{{ route('registerStore') }}" class="btn btn-secondary">S'inscrire</a>
+            @else
+                <a href="{{ route('articles.index') }}" class="btn btn-primary">Voir les articles</a>
+                <a href="{{ route('articles.create') }}" class="btn btn-secondary">Créer un article</a>
+            @endguest
+        </div>
+    </div>
+@endsection
+

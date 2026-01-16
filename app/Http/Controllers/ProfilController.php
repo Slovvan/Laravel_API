@@ -7,6 +7,7 @@ use App\Models\Profils;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\ProcessProfileImage;
 
 class ProfilController extends Controller
 {
@@ -82,10 +83,14 @@ class ProfilController extends Controller
             // Guardar el nuevo avatar
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $profil->avatar = $avatarPath;
+
+            // Dispatch job to process image
+            ProcessProfileImage::dispatch($profil->id, $avatarPath);
         }
 
         $profil->save();
 
-        return redirect()->route('profil.edit')->with('success', 'Votre profil a été mis à jour avec succès.');
+        return redirect()->route('profil.show', ['profil' => $profil->id])
+                         ->with('success', 'Votre profil a été mis à jour avec succès.');
     }
 }

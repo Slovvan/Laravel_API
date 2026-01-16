@@ -1,5 +1,5 @@
-import { login } from '@/routes';
-import { store } from '@/routes/register';
+import { loginStore } from '@/routes';
+import { registerStore as store } from '@/routes';
 import { Form, Head } from '@inertiajs/react';
 
 import InputError from '@/components/input-error';
@@ -103,7 +103,7 @@ export default function Register() {
 
                         <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
+                            <TextLink href={loginStore()} tabIndex={6}>
                                 Log in
                             </TextLink>
                         </div>
