@@ -8,22 +8,22 @@
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #007bff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: 2px solid #99a0c0;
+            box-shadow: none;
         }
         .profile-avatar-placeholder {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
+            background: #f2f2f2;
+            color: #8a1f11;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 60px;
             font-weight: bold;
-            border: 4px solid #007bff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: 2px solid #99a0c0;
+            box-shadow: none;
         }
     </style>
 @endsection

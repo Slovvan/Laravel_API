@@ -10,6 +10,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ArticleLikeController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
 
 /* Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -25,6 +27,9 @@ Route::get('/', function () {
 Route::get('/aboutMe', function () {
     return view('about_me', ['name' => 'Erik']);
 })->name("aboutMe");
+
+// Search route
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Rutas de Autenticación
 Route::post('/login', [AuthController::class, 'getLoginForm'])->name("loginStore");
@@ -49,6 +54,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/comments/{comment}/report', [ReportController::class, 'store'])->name('comments.report.store');
     Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
+    
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 });
     
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');// Cambiar esta línea:
@@ -66,6 +78,7 @@ Route::group(['middleware' => 'auth', 'admin'], function () {
 
     Route::get('/admin/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/admin/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
+
 });
 
 require __DIR__.'/settings.php';

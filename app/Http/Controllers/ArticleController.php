@@ -35,9 +35,18 @@ class ArticleController extends Controller
     }
 
     public function index(){
-        $articles = Article::with('user.profil')->paginate(10);
+        $query = request()->query('q', '');
+        
+        if ($query) {
+            $searchResults = Article::search($query)->paginate(10);
+            $articles = Article::with('user.profil')
+                ->whereIn('id', $searchResults->pluck('id'))
+                ->paginate(10)
+                ->appends(request()->query());
+        } else {
+            $articles = Article::with('user.profil')->paginate(10);
+        }
 
-        // Si es una petición Inertia, renderizar con Inertia
         if (request()->header('X-Inertia')) {
             return Inertia::render('articles/index', [
                 'articles' => $articles->map(fn($article) => [
@@ -62,10 +71,11 @@ class ArticleController extends Controller
                     'next_page_url' => $articles->nextPageUrl(),
                     'prev_page_url' => $articles->prevPageUrl(),
                 ],
+                'query' => $query,
             ]);
         }
 
-        return view('articles.index', compact('articles'));
+        return view('articles.index', compact('articles', 'query'));
     }
 
     public function show(int $id)

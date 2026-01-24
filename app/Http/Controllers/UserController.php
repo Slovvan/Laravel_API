@@ -5,10 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Profils;
+use App\Repositories\UserRepository;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    protected UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
     public function index(){
         $users = User::all();
         return view('users.index', [
@@ -17,7 +24,7 @@ class UserController extends Controller
     }
 
     public function edit($id){
-        $user = User::find($id);
+        $user = $this->userRepository->findById($id);
         $profil = Profils::where('user_id', $id)->first();
 
         $profil = $user->profil;
@@ -30,7 +37,7 @@ class UserController extends Controller
     }
 
     public function update(Request $request, int $id) {
-        $user = User::find($id);
+        $user = $this->userRepository->findById($id);
 
         if (!$user) {
             return redirect()->route('users.index');
@@ -48,7 +55,7 @@ class UserController extends Controller
 
     public function destroy(int $id)
     {
-        $user = User::find($id);
+        $user = $this->userRepository->findById($id);
 
         if (!$user) {
             return redirect()->route('users.index')->with('error', 'Utilisateur non trouvé.');

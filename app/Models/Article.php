@@ -3,15 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 use App\Models\Comments;
 use Laravel\Scout\Searchable;
 
 class Article extends Model
 {
-    use Searchable;
+    use Searchable, HasFactory;
 
-    protected $fillable = ['title', 'content', 'user_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'status'];
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
+            'created_at' => $this->created_at,
+        ];
+    }
 
     /**
      * Inverse one-to-one / many: Article -> User
@@ -65,14 +79,4 @@ class Article extends Model
     {
         return \Illuminate\Support\Str::limit(strip_tags($this->content), 200);
     }
-
-    public function toSearchableArray()
-    {
-        return [
-            'title' => $this->title,
-            'content' => $this->content,
-            'excerpt' => $this->getExcerpt(),
-        ];
-    }
 }
-

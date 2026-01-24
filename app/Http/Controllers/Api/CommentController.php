@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Comments;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,12 @@ class CommentController extends Controller
         // Cargar relación user
         $comment->load('user');
         $comment->load('user.profil');
+
+        // Send notification to article author
+        $article->load('user');
+        if ($article->user_id !== auth()->id()) {
+            $article->user->notify(new NewCommentNotification($comment, $article));
+        }
 
         return response()->json([
             'success' => true,
@@ -55,13 +62,7 @@ class CommentController extends Controller
 
     public function update(Request $request, Comments $comment): JsonResponse
     {
-        // Verificar autorización
-        if (auth()->id() !== $comment->user_id && auth()->user()->is_admin !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Non autorisé'
-            ], 403);
-        }
+        $this->authorize('update', $comment);
 
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:500'],
@@ -80,13 +81,7 @@ class CommentController extends Controller
 
     public function destroy(Comments $comment): JsonResponse
     {
-        // Verificar autorización
-        if (auth()->id() !== $comment->user_id && auth()->user()->is_admin !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Non autorisé'
-            ], 403);
-        }
+        $this->authorize('delete', $comment);
 
         $comment->delete();
 

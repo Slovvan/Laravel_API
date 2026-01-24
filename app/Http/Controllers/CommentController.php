@@ -11,25 +11,27 @@ class CommentController extends Controller
 {
     public function store(Request $request, int $articleId)
     {
-        $validatedData = $request->validate([
-            'content' => ['required', 'string', 'max:255'],
+        $validated = $request->validate([
+            'content' => ['required', 'string', 'max:255']
         ]);
 
         $comment = new Comments();
-        $comment->content = $validatedData['content'];
+        $comment->content = $validated['content'];
         $comment->article_id = $articleId;
         $comment->user_id = auth()->id();
         $comment->save();
 
-        
+        // IMPORTANT: Load the user relationship so the notification can see the name
+        $comment->load('user'); 
 
-        // Send notification email to article author if not the commenter
-        $article = Article::find($articleId);
+        $article = Article::with('user')->find($articleId);
+        
         if ($article->user_id !== auth()->id()) {
-            Mail::to($article->user->email)->send(new CommentNotification($comment, $article));
+            // This will now write directly to the 'notifications' table
+            $article->user->notify(new \App\Notifications\NewCommentNotification($comment, $article));
         }
 
-        return redirect()->route('articles.show', ['id' => $articleId])->with('success', 'Commentaire ajouté avec succès.');
+        return redirect()->back();
     }
 
     public function index(){
@@ -46,10 +48,7 @@ class CommentController extends Controller
             return redirect()->route('comments.index');
         }
 
-        // Check if user can edit this comment
-        if (auth()->id() !== $comment->user_id && auth()->user()->is_admin !== 'admin') {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('update', $comment);
 
         return view('comments.edit', compact('comment'))->with('info', 'Vous pouvez modifier les informations du commentaire.');
     }
@@ -61,10 +60,7 @@ class CommentController extends Controller
             return redirect()->route('articles.index');
         }
 
-        // Check if user can edit this comment
-        if (auth()->id() !== $comment->user_id && auth()->user()->is_admin !== 'admin') {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('update', $comment);
 
         $validated_datas = $request->validate([
             'content' => ['required', 'string', 'max:255']
@@ -87,13 +83,7 @@ class CommentController extends Controller
             return redirect()->route('articles.index')->with('error', 'commentaire non trouvé.');
         }
 
-        // Verificar autorización
-        if (auth()->id() !== $comment->user_id && auth()->user()->is_admin !== 'admin') {
-            if (request()->expectsJson()) {
-                return response()->json(['success' => false, 'message' => 'Non autorisé'], 403);
-            }
-            return redirect()->back()->with('error', 'Non autorisé');
-        }
+        $this->authorize('delete', $comment);
 
         $comment->delete();
         

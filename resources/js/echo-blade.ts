@@ -1,10 +1,3 @@
-import '../css/app.css';
-
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { initializeTheme } from './hooks/use-appearance';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
@@ -15,63 +8,81 @@ declare global {
     }
 }
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+console.log('[Echo] blade script loaded');
 
-createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./pages/${name}.tsx`,
-            import.meta.glob('./pages/**/*.tsx'),
-        ),
-    setup({ el, App, props }) {
-        const root = createRoot(el);
-
-        root.render(
-            <StrictMode>
-                <App {...props} />
-            </StrictMode>,
-        );
-    },
-    progress: {
-        color: '#4B5563',
-    },
-});
-
-// This will set light / dark mode on load...
-initializeTheme();
-
-// Initialize Laravel Echo
 window.Pusher = Pusher;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-    wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusherapp.com`,
+    wsHost: import.meta.env.VITE_PUSHER_HOST
+        ? import.meta.env.VITE_PUSHER_HOST
+        : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusherapp.com`,
     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
 
-// Listen for notifications on private user channel
-if (!window.Echo) {
-    console.debug('[Echo] not initialized');
-} else if (!document.documentElement.getAttribute('data-user-id')) {
-    console.debug('[Echo] no data-user-id found on <html>');
+const userId = document.documentElement.getAttribute('data-user-id');
+if (!userId) {
+    console.log('[Echo] no data-user-id found on <html>');
 } else {
-    const userId = document.documentElement.getAttribute('data-user-id');
-    window.Echo.private(`user.${userId}`)
+    console.log('[Echo] subscribing to user channel', userId);
+    const channel = window.Echo.private(`user.${userId}`);
+    channel
+        .subscribed(() => {
+            console.log('[Echo] channel subscribed');
+        })
+        .error((error: any) => {
+            console.log('[Echo] channel error', error);
+        })
         .listen('.notification.received', (event: any) => {
-            console.debug('[Echo] notification.received', event);
+            console.log('[Echo] notification.received', event);
             showNotificationToast(event);
         });
 }
 
-/**
- * Show notification toast
- */
+// Connection status badge (debug)
+const badge = document.createElement('div');
+badge.textContent = 'Echo: connecting';
+badge.style.cssText = `
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: #f59e0b;
+    color: #111827;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+`;
+document.body.appendChild(badge);
+
+const connector = (window.Echo as any)?.connector?.pusher;
+if (!connector) {
+    badge.textContent = 'Echo: not connected';
+    badge.style.background = '#ef4444';
+    console.log('[Echo] Pusher connector not found');
+} else {
+    connector.connection.bind('connected', () => {
+        badge.textContent = 'Echo: connected';
+        badge.style.background = '#22c55e';
+    });
+    connector.connection.bind('disconnected', () => {
+        badge.textContent = 'Echo: disconnected';
+        badge.style.background = '#ef4444';
+    });
+    connector.connection.bind('error', (err: any) => {
+        badge.textContent = 'Echo: error';
+        badge.style.background = '#ef4444';
+        console.log('[Echo] connection error', err);
+    });
+}
+
 function showNotificationToast(notification: any) {
     const message = getNotificationMessage(notification);
     const notificationEl = document.createElement('div');
@@ -99,24 +110,21 @@ function showNotificationToast(notification: any) {
         max-width: 400px;
         animation: slideIn 0.3s ease-out;
     `;
-    
+
     document.body.appendChild(notificationEl);
-    
+
     const closeBtn = notificationEl.querySelector('.notification-close') as HTMLButtonElement;
     closeBtn?.addEventListener('click', () => {
         notificationEl.style.animation = 'slideOut 0.3s ease-out forwards';
         setTimeout(() => notificationEl.remove(), 300);
     });
-    
+
     setTimeout(() => {
         notificationEl.style.animation = 'slideOut 0.3s ease-out forwards';
         setTimeout(() => notificationEl.remove(), 300);
     }, 5000);
 }
 
-/**
- * Get notification message based on type
- */
 function getNotificationMessage(notification: any): string {
     const payload = notification?.data ?? notification?.notification?.data ?? notification;
     const type = notification?.type ?? notification?.notification?.type ?? payload?.type;
@@ -132,9 +140,6 @@ function getNotificationMessage(notification: any): string {
     return 'Nouvelle notification';
 }
 
-/**
- * Escape HTML to prevent XSS
- */
 function escapeHtml(text: string): string {
     const map: Record<string, string> = {
         '&': '&amp;',
@@ -143,10 +148,9 @@ function escapeHtml(text: string): string {
         '"': '&quot;',
         "'": '&#039;',
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-// Add CSS for animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -159,7 +163,7 @@ style.textContent = `
             opacity: 1;
         }
     }
-    
+
     @keyframes slideOut {
         from {
             transform: translateX(0);
@@ -171,4 +175,5 @@ style.textContent = `
         }
     }
 `;
+
 document.head.appendChild(style);

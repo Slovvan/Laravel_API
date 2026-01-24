@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Artícles</h1>
+    <h1>
+        Artícles
+        @if($query)
+            - Resultados para "{{ $query }}"
+        @endif
+    </h1>
 
     @if (session('success'))
         <div>{{ session('success') }}</div>

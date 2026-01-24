@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Clean up old notifications daily
         $schedule->command('notifications:clean')->daily();
 
-        // Reindex Scout search indexes weekly
-        $schedule->command('scout:index')->weekly();
+        // Delete draft articles older than 30 days daily
+        $schedule->command('articles:delete-old-drafts')->daily();
     })
     ->create();
